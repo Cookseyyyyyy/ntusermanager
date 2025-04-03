@@ -4,6 +4,7 @@ import { useUser } from '../../context/UserContext';
 import { verifyEmail, changePassword, getSignInMethodsForEmail } from '../../services/firebase';
 import { trackProfileUpdate, trackPasswordChange, trackEmailVerification } from '../../services/analytics';
 import SetPasswordForm from './SetPasswordForm';
+import SubscriptionManagement from './SubscriptionManagement';
 
 function ProfileDetails() {
   const { currentUser } = useAuth();
@@ -210,6 +211,9 @@ function ProfileDetails() {
             )}
           </div>
         </div>
+        
+        {/* Subscription Management */}
+        <SubscriptionManagement />
         
         <div className="profile-section">
           <h3>Security</h3>

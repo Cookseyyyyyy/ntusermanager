@@ -36,4 +36,10 @@ export const syncUserProfile = () => api.post('/users/sync');
 export const updateUserProfile = (userData) => api.put('/users/me/profile', userData);
 export const updateUserPreferences = (preferences) => api.put('/users/me/preferences', { preferences });
 
+// Subscription API functions
+export const getSubscriptionTier = () => api.get('/users/me/subscription-tier');
+export const getSubscriptionDetails = () => api.get('/billing/subscription');
+export const createStripePortalSession = () => api.post('/billing/create-portal-session');
+export const getStripeCustomer = () => api.get('/billing/customer');
+
 export default api;
