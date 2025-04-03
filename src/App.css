@@ -43,7 +43,7 @@ html, body {
 
 body {
   line-height: 1.6;
-  background: radial-gradient(circle at bottom, #8c47ac 0%, #000000 100%);
+  background: radial-gradient(circle at bottom, #6547ac 0%, #000000 100%);
   background-attachment: fixed;
 }
 

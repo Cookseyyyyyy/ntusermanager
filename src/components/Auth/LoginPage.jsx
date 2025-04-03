@@ -54,7 +54,8 @@ function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>User Dashboard Login</h2>
+        <h2>Nice Touch</h2>
+        <h3>User Dashboard Login</h3>
         
         {(loginError || error) && (
           <div className="error-message">

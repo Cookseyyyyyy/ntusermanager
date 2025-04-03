@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   getSubscriptionTier, 
   getSubscriptionDetails, 
-  createStripePortalSession 
+  createStripePortalSession,
+  createStripeCheckoutSession
 } from '../../services/api';
 
 function SubscriptionManagement() {
@@ -11,6 +12,7 @@ function SubscriptionManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [portalLoading, setPortalLoading] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   useEffect(() => {
     fetchSubscriptionData();
@@ -58,6 +60,27 @@ function SubscriptionManagement() {
       setError('Failed to access subscription portal: ' + (err.response?.data?.message || err.message));
     } finally {
       setPortalLoading(false);
+    }
+  };
+
+  const handleUpgradeSubscription = async () => {
+    setCheckoutLoading(true);
+    setError('');
+    
+    try {
+      const priceId = 'price_1R9kchGKqHXhKBbWczq1A9eS'; // Using the provided price ID
+      const response = await createStripeCheckoutSession(priceId);
+      
+      if (response.data.status === 'success' && response.data.data.url) {
+        // Open Stripe Checkout in a new tab
+        window.open(response.data.data.url, '_blank');
+      } else {
+        setError('Failed to create checkout session');
+      }
+    } catch (err) {
+      setError('Failed to upgrade subscription: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -123,6 +146,14 @@ function SubscriptionManagement() {
             disabled={portalLoading}
           >
             {portalLoading ? 'Loading...' : 'Manage Subscription'}
+          </button>
+          
+          <button 
+            className="btn primary-btn upgrade-btn" 
+            onClick={handleUpgradeSubscription}
+            disabled={checkoutLoading}
+          >
+            {checkoutLoading ? 'Loading...' : 'Upgrade!'}
           </button>
           
           {/* <button 

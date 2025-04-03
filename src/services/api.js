@@ -40,6 +40,7 @@ export const updateUserPreferences = (preferences) => api.put('/users/me/prefere
 export const getSubscriptionTier = () => api.get('/users/me/subscription-tier');
 export const getSubscriptionDetails = () => api.get('/billing/subscription');
 export const createStripePortalSession = () => api.post('/billing/create-portal-session');
+export const createStripeCheckoutSession = (priceId) => api.post('/billing/create-checkout-session', { priceId });
 export const getStripeCustomer = () => api.get('/billing/customer');
 
 export default api;
