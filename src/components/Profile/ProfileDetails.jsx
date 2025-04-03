@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useUser } from '../../context/UserContext';
-import { verifyEmail, changePassword } from '../../services/firebase';
+import { verifyEmail, changePassword, getSignInMethodsForEmail } from '../../services/firebase';
 import { trackProfileUpdate, trackPasswordChange, trackEmailVerification } from '../../services/analytics';
+import SetPasswordForm from './SetPasswordForm';
 
 function ProfileDetails() {
   const { currentUser } = useAuth();
@@ -20,6 +21,26 @@ function ProfileDetails() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
+  
+  const [signInMethods, setSignInMethods] = useState([]);
+  const [loadingMethods, setLoadingMethods] = useState(true);
+  
+  useEffect(() => {
+    async function fetchSignInMethods() {
+      if (currentUser?.email) {
+        try {
+          const methods = await getSignInMethodsForEmail(currentUser.email);
+          setSignInMethods(methods);
+        } catch (err) {
+          console.error('Error fetching sign-in methods:', err);
+        } finally {
+          setLoadingMethods(false);
+        }
+      }
+    }
+    
+    fetchSignInMethods();
+  }, [currentUser]);
   
   // Start editing
   const handleEdit = () => {
@@ -257,6 +278,10 @@ function ProfileDetails() {
             </button>
           )}
         </div>
+        
+        {signInMethods.includes('google.com') && !signInMethods.includes('password') && (
+          <SetPasswordForm />
+        )}
       </div>
     </div>
   );

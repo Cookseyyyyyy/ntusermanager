@@ -7,7 +7,11 @@ import {
   signOut,
   updatePassword,
   sendEmailVerification,
-  onAuthStateChanged
+  onAuthStateChanged,
+  linkWithCredential,
+  EmailAuthProvider,
+  fetchSignInMethodsForEmail,
+  createUserWithEmailAndPassword
 } from 'firebase/auth';
 import { getAnalytics } from 'firebase/analytics';
 
@@ -39,11 +43,24 @@ export const loginWithGoogle = () =>
 
 export const logoutUser = () => signOut(auth);
 
+export const registerWithEmail = (email, password) =>
+  createUserWithEmailAndPassword(auth, email, password);
+
 export const changePassword = (user, newPassword) => 
   updatePassword(user, newPassword);
 
 export const verifyEmail = (user) => 
   sendEmailVerification(user);
+
+// Get sign-in methods for an email
+export const getSignInMethodsForEmail = (email) => 
+  fetchSignInMethodsForEmail(auth, email);
+
+// Link email/password to existing account
+export const linkEmailPassword = (user, email, password) => {
+  const credential = EmailAuthProvider.credential(email, password);
+  return linkWithCredential(user, credential);
+};
 
 // Get current user helper function
 export const getCurrentUser = () => {

@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-function LoginPage() {
+function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [loginError, setLoginError] = useState('');
+  const [signupError, setSignupError] = useState('');
   
-  const { login, loginGoogle, currentUser, error } = useAuth();
+  const { signup, loginGoogle, currentUser, error } = useAuth();
   const navigate = useNavigate();
   
   // Redirect if already logged in
@@ -16,27 +17,40 @@ function LoginPage() {
     return <Navigate to="/dashboard" />;
   }
   
-  const handleEmailLogin = async (e) => {
+  const handleEmailSignup = async (e) => {
     e.preventDefault();
-    setLoginError('');
+    setSignupError('');
+    
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setSignupError('Passwords do not match');
+      return;
+    }
+    
+    // Validate password strength
+    if (password.length < 6) {
+      setSignupError('Password must be at least 6 characters');
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
-      const success = await login(email, password);
+      const success = await signup(email, password);
       if (success) {
         navigate('/dashboard');
       } else {
-        setLoginError('Invalid email or password');
+        setSignupError('Failed to create account');
       }
     } catch (err) {
-      setLoginError(err.message);
+      setSignupError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
   
   const handleGoogleLogin = async () => {
-    setLoginError('');
+    setSignupError('');
     setIsLoading(true);
     
     try {
@@ -45,7 +59,7 @@ function LoginPage() {
         navigate('/dashboard');
       }
     } catch (err) {
-      setLoginError(err.message);
+      setSignupError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -54,15 +68,15 @@ function LoginPage() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h2>User Dashboard Login</h2>
+        <h2>Create Account</h2>
         
-        {(loginError || error) && (
+        {(signupError || error) && (
           <div className="error-message">
-            {loginError || error}
+            {signupError || error}
           </div>
         )}
         
-        <form onSubmit={handleEmailLogin}>
+        <form onSubmit={handleEmailSignup}>
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -85,12 +99,23 @@ function LoginPage() {
             />
           </div>
           
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+          
           <button 
             type="submit" 
             className="btn login-btn" 
             disabled={isLoading}
           >
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
         
@@ -103,15 +128,15 @@ function LoginPage() {
           onClick={handleGoogleLogin}
           disabled={isLoading}
         >
-          Login with Google
+          Sign up with Google
         </button>
         
         <div className="auth-redirect">
-          <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+          <p>Already have an account? <Link to="/login">Login</Link></p>
         </div>
       </div>
     </div>
   );
 }
 
-export default LoginPage; 
+export default SignupPage; 

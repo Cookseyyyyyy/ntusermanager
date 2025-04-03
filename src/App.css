@@ -194,6 +194,23 @@ body {
   font-size: 14px;
 }
 
+/* Auth redirect link */
+.auth-redirect {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-redirect a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-redirect a:hover {
+  text-decoration: underline;
+}
+
 /* Dashboard layout */
 .dashboard-container {
   display: flex;

@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, loginWithEmail, loginWithGoogle, logoutUser } from '../services/firebase';
+import { auth, loginWithEmail, loginWithGoogle, logoutUser, registerWithEmail } from '../services/firebase';
 import { trackLogin, trackLogout } from '../services/analytics';
 
 const AuthContext = createContext();
@@ -78,6 +78,38 @@ export function AuthProvider({ children }) {
     }
   };
   
+  const signup = async (email, password) => {
+    try {
+      setError('');
+      await registerWithEmail(email, password);
+      trackLogin('email-signup');
+      return true;
+    } catch (err) {
+      console.error('Signup error:', err.code, err.message);
+      
+      // Handle Firebase specific error codes
+      let errorMessage = 'Signup failed';
+      switch (err.code) {
+        case 'auth/email-already-in-use':
+          errorMessage = 'This email is already registered. Please use a different email.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email format.';
+          break;
+        case 'auth/weak-password':
+          errorMessage = 'Password is too weak. Please use a stronger password.';
+          break;
+        case 'auth/network-request-failed':
+          errorMessage = 'Network error. Please check your connection';
+          break;
+        default:
+          errorMessage = err.message;
+      }
+      setError(errorMessage);
+      return false;
+    }
+  };
+  
   const logout = async () => {
     try {
       setError('');
@@ -94,6 +126,7 @@ export function AuthProvider({ children }) {
     currentUser,
     login,
     loginGoogle,
+    signup,
     logout,
     error,
     loading

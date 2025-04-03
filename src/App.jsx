@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { UserProvider } from './context/UserContext';
 import LoginPage from './components/Auth/LoginPage';
+import SignupPage from './components/Auth/SignupPage';
 import Dashboard from './components/Layout/Dashboard';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 import './App.css';
@@ -13,6 +14,7 @@ function App() {
         <UserProvider>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
             <Route 
               path="/dashboard/*" 
               element={
